@@ -54,7 +54,7 @@ for entry in entries:
 
     if len(newItem) == 4 and newItem[3].strip() != "true":
         command = cleanCommand(newItem[1])
-        desktopFiles.append(DesktopItem(newItem[0], newItem[2], command))
+        desktopFiles.append(DesktopItem(newItem[0].strip(), newItem[2], command))
 
 print("<openbox_pipe_menu>")
 for fav in favorites:
