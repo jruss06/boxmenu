@@ -32,7 +32,9 @@ def cleanCommand(command):
     for word in words:
         if '%' in word:
             words.remove(word)
-    return " ".join(words)
+    if words[-1] == '--': words.pop(-1)
+    command = " ".join(words)
+    return command
 
 def generate():
     entries = glob.glob('/usr/share/applications/*.desktop')
