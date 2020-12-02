@@ -1,0 +1,51 @@
+#!/bin/python3
+
+import configparser
+import os
+import uuid
+
+config = configparser.RawConfigParser()
+entries = os.listdir('/usr/share/applications/')
+
+class DesktopItem:
+    def __init__(self, name, types, command):
+        self.name = name
+        self.types = types
+        self.command = command
+        self.used = False
+
+cats = ["Office", "Utility", "Network", "Graphics", "AudioVideo", "Settings"]
+
+desktopFiles = []
+
+for entry in entries:
+    config.read('/usr/share/applications/' + entry)
+    desktop = config["Desktop Entry"] 
+    entryType = desktop.get('Categories')
+    command = desktop.get('Exec')
+    command = command.replace('%U', '')
+    command = command.replace('%u', '')
+    name = desktop.get('Name')
+    nodisplay = desktop.get('NoDisplay')
+    if nodisplay != "true":
+        item = DesktopItem(name, entryType, command) 
+        desktopFiles.append(item)
+
+print("<openbox_pipe_menu>")
+for cat in cats:
+    print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"" + cat + "\">")
+    for desktop in desktopFiles:
+        if cat in desktop.types:
+            desktop.used = True
+            print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
+    print("</menu>")
+
+
+print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"Other\">")
+for desktop in desktopFiles:
+    if desktop.used == False:
+        desktop.used = True
+        print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
+print("</menu>")
+
+print("</openbox_pipe_menu>")
