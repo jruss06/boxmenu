@@ -7,7 +7,14 @@ import uuid
 config = configparser.RawConfigParser()
 entries = os.listdir('/usr/share/applications/')
 
-cats = ["Office", "Utility", "Network", "Graphics", "AudioVideo", "Settings"]
+cats = {
+    "Office" : "Office", 
+    "Accessories": "Utility", 
+    "Network": "Network", 
+    "Graphics": "Graphics", 
+    "Multimedia": "AudioVideo",
+    "Settings": "Settings"
+    }
 
 desktopFiles = []
 favorites = []
@@ -28,7 +35,8 @@ def cleanCommand(command):
 
 favorites.extend([
         DesktopItem("Terminal", None, "lxterminal"),
-        DesktopItem("Web Browser", None, "firefox")
+        DesktopItem("Web Browser", None, "firefox"),
+        DesktopItem("Files", None, "pcmanfm")
         ])
 
 for entry in entries:
@@ -50,10 +58,10 @@ for fav in favorites:
         print("<item label=\"" + fav.name +"\"> <action name=\"Execute\"><command><![CDATA[" + fav.command + "]]></command></action></item>")
 
 print("<separator label=\"Categories\"/>")
-for cat in cats:
+for cat in sorted(cats):
     print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"" + cat + "\">")
     for desktop in desktopFiles:
-        if cat in desktop.types and desktop.used == False:
+        if cats[cat] in desktop.types and desktop.used == False:
             desktop.used = True
             print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
     print("</menu>")
