@@ -1,10 +1,8 @@
 #!/bin/python3
 
-import configparser
 import glob
 import uuid
 
-config = configparser.RawConfigParser()
 entries = glob.glob('/usr/share/applications/*.desktop')
 
 cats = {
@@ -49,7 +47,7 @@ for entry in entries:
             newItem[0] = strings[1]
         if strings[0] == "Exec" and newItem[1] == "None":
             newItem[1] = strings[1]
-        if strings[0] == "Categories":
+        if strings[0] == "Categories" and newItem[2] == "None":
             newItem[2] = strings[1]
         if strings[0] == "NoDisplay":
             newItem[3] = strings[1]
