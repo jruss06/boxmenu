@@ -19,22 +19,28 @@ class DesktopItem:
         self.command = command
         self.used = False
 
+def cleanCommand(command):
+    words = command.split()
+    for word in words:
+        if '%' in word:
+            words.remove(word)
+    return " ".join(words)
+
 favorites.extend([
         DesktopItem("Terminal", None, "lxterminal"),
-        DesktopItem("Web Browser", None, "firefox") 
+        DesktopItem("Web Browser", None, "firefox")
         ])
 
 for entry in entries:
     config.read('/usr/share/applications/' + entry)
-    desktop = config["Desktop Entry"] 
+    desktop = config["Desktop Entry"]
     entryType = desktop.get('Categories')
     command = desktop.get('Exec')
-    command = command.replace('%U', '')
-    command = command.replace('%u', '')
+    command = cleanCommand(command)
     name = desktop.get('Name')
     nodisplay = desktop.get('NoDisplay')
     if nodisplay != "true":
-        item = DesktopItem(name, entryType, command) 
+        item = DesktopItem(name, entryType, command.strip()) 
         desktopFiles.append(item)
 
 print("<openbox_pipe_menu>")
@@ -47,7 +53,7 @@ print("<separator label=\"Categories\"/>")
 for cat in cats:
     print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"" + cat + "\">")
     for desktop in desktopFiles:
-        if cat in desktop.types:
+        if cat in desktop.types and desktop.used == False:
             desktop.used = True
             print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
     print("</menu>")
