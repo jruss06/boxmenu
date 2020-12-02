@@ -1,21 +1,8 @@
 #!/bin/python3
-
+import os
 import glob
 import uuid
-
-entries = glob.glob('/usr/share/applications/*.desktop')
-
-cats = {
-    "Office" : "Office", 
-    "Accessories": "Utility", 
-    "Network": "Network", 
-    "Graphics": "Graphics", 
-    "Multimedia": "AudioVideo",
-    "Settings": "Settings"
-    }
-
-desktopFiles = []
-favorites = []
+import sys, getopt
 
 class DesktopItem:
     def __init__(self, name, types, command):
@@ -24,6 +11,22 @@ class DesktopItem:
         self.command = command
         self.used = False
 
+def writeMenu():
+    path = "$HOME/.config/openbox/menu.xml"
+    exp_var = os.path.expandvars(path) 
+    if os.path.exists(exp_var) == False:
+        print(path + " does not exist")
+        return
+    data = '<?xml version="1.0" encoding="utf-8"?> \n'
+    data += '<openbox_menu xmlns="http://openbox.org/"'
+    data += ' xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" \n'
+    data += '  xsi:schemaLocation="http://openbox.org/"> \n'
+    data += ' <menu id="root-menu" label="boxmenu-gen" execute="boxmenu" /> \n'
+    data += '</openbox_menu>'
+    f = open(exp_var, "w")
+    f.write(data)
+    f.close()
+
 def cleanCommand(command):
     words = command.split()
     for word in words:
@@ -31,51 +34,104 @@ def cleanCommand(command):
             words.remove(word)
     return " ".join(words)
 
-favorites.extend([
-        DesktopItem("Terminal", None, "lxterminal"),
-        DesktopItem("Web Browser", None, "firefox"),
-        DesktopItem("Files", None, "pcmanfm")
-        ])
-
-for entry in entries:
-    f = open(entry)
-    newItem = ["None", "None", "None", "None"]
-
-    for line in f:
-        strings = line.split("=")
-        if strings[0] == "Name" and newItem[0] == "None":
-            newItem[0] = strings[1]
-        if strings[0] == "Exec" and newItem[1] == "None":
-            newItem[1] = strings[1]
-        if strings[0] == "Categories" and newItem[2] == "None":
-            newItem[2] = strings[1]
-        if strings[0] == "NoDisplay":
-            newItem[3] = strings[1]
-
-    if len(newItem) == 4 and newItem[3].strip() != "true":
-        command = cleanCommand(newItem[1])
-        desktopFiles.append(DesktopItem(newItem[0].strip(), newItem[2], command))
-
-print("<openbox_pipe_menu>")
-for fav in favorites:
-    if fav.used == False:
-        fav.used = True
-        print("<item label=\"" + fav.name +"\"> <action name=\"Execute\"><command><![CDATA[" + fav.command + "]]></command></action></item>")
-
-print("<separator label=\"Categories\"/>")
-for cat in sorted(cats):
-    print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"" + cat + "\">")
+def generate():
+    entries = glob.glob('/usr/share/applications/*.desktop')
+    
+    cats = {
+        "Office" : "Office", 
+        "Accessories": "Utility", 
+        "Network": "Network", 
+        "Graphics": "Graphics", 
+        "Multimedia": "AudioVideo",
+        "Settings": "Settings"
+        }
+    
+    desktopFiles = []
+    favorites = []
+    
+    favorites.extend([
+            DesktopItem("Terminal", None, "lxterminal"),
+            DesktopItem("Web Browser", None, "firefox"),
+            DesktopItem("Files", None, "pcmanfm")
+            ])
+    
+    for entry in entries:
+        f = open(entry)
+        newItem = ["None", "None", "None", "None"]
+    
+        for line in f:
+            strings = line.split("=")
+            if strings[0] == "Name" and newItem[0] == "None":
+                newItem[0] = strings[1]
+            if strings[0] == "Exec" and newItem[1] == "None":
+                newItem[1] = strings[1]
+            if strings[0] == "Categories" and newItem[2] == "None":
+                newItem[2] = strings[1]
+            if strings[0] == "NoDisplay":
+                newItem[3] = strings[1]
+        f.close()
+    
+        if len(newItem) == 4 and newItem[3].strip() != "true":
+            command = cleanCommand(newItem[1])
+            desktopFiles.append(DesktopItem(newItem[0].strip(), newItem[2], command))
+    
+    print("<openbox_pipe_menu>")
+    for fav in favorites:
+        if fav.used == False:
+            fav.used = True
+            print("<item label=\"" + fav.name +"\"> <action name=\"Execute\"><command><![CDATA[" + fav.command + "]]></command></action></item>")
+    
+    print("<separator label=\"Categories\"/>")
+    for cat in sorted(cats):
+        print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"" + cat + "\">")
+        for desktop in desktopFiles:
+            if cats[cat] in desktop.types and desktop.used == False:
+                desktop.used = True
+                print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
+        print("</menu>")
+    
+    
+    print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"Other\">")
     for desktop in desktopFiles:
-        if cats[cat] in desktop.types and desktop.used == False:
+        if desktop.used == False:
             desktop.used = True
             print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
     print("</menu>")
+    print("</openbox_pipe_menu>")
 
 
-print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"Other\">")
-for desktop in desktopFiles:
-    if desktop.used == False:
-        desktop.used = True
-        print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
-print("</menu>")
-print("</openbox_pipe_menu>")
+## MAIN ##
+def main():
+    argumentList = sys.argv[1:]
+     
+    # Options
+    options = "hw" 
+    # Long options
+    long_options = ["Help", "write"]
+    
+    if len(argumentList) == 0:
+        generate()
+    
+    try:
+        # Parsing argument
+        arguments, values = getopt.getopt(argumentList, options, long_options)
+         
+        # checking each argument
+        for currentArgument, currentValue in arguments:
+     
+            if currentArgument in ("-h", "--Help"):
+                print("usage: boxmenu [options] \n")
+                print("    -h, --help        help")
+                print("    -w, --write       write menu.xml file")
+                 
+            elif currentArgument in ("-w", "--write"):
+                writeMenu()
+                print("wrote menu.xml file")
+    
+    except getopt.error as err:
+        # output error, and return with an error code
+        print (str(err))
+
+
+if __name__ == "__main__":
+    main()
