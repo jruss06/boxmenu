@@ -107,7 +107,7 @@ def main():
     # Options
     options = "hw" 
     # Long options
-    long_options = ["Help", "write"]
+    long_options = ["help", "write"]
     
     if len(argumentList) == 0:
         generate()
@@ -119,7 +119,7 @@ def main():
         # checking each argument
         for currentArgument, currentValue in arguments:
      
-            if currentArgument in ("-h", "--Help"):
+            if currentArgument in ("-h", "--help"):
                 print("usage: boxmenu [options] \n")
                 print("    -h, --help        help")
                 print("    -w, --write       write menu.xml file")
