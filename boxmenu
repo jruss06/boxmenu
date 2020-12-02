@@ -7,6 +7,11 @@ import uuid
 config = configparser.RawConfigParser()
 entries = os.listdir('/usr/share/applications/')
 
+cats = ["Office", "Utility", "Network", "Graphics", "AudioVideo", "Settings"]
+
+desktopFiles = []
+favorites = []
+
 class DesktopItem:
     def __init__(self, name, types, command):
         self.name = name
@@ -14,9 +19,10 @@ class DesktopItem:
         self.command = command
         self.used = False
 
-cats = ["Office", "Utility", "Network", "Graphics", "AudioVideo", "Settings"]
-
-desktopFiles = []
+favorites.extend([
+        DesktopItem("Terminal", None, "lxterminal"),
+        DesktopItem("Web Browser", None, "firefox") 
+        ])
 
 for entry in entries:
     config.read('/usr/share/applications/' + entry)
@@ -32,6 +38,12 @@ for entry in entries:
         desktopFiles.append(item)
 
 print("<openbox_pipe_menu>")
+for fav in favorites:
+    if fav.used == False:
+        fav.used = True
+        print("<item label=\"" + fav.name +"\"> <action name=\"Execute\"><command><![CDATA[" + fav.command + "]]></command></action></item>")
+
+print("<separator label=\"Categories\"/>")
 for cat in cats:
     print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"" + cat + "\">")
     for desktop in desktopFiles:
@@ -47,5 +59,4 @@ for desktop in desktopFiles:
         desktop.used = True
         print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
 print("</menu>")
-
 print("</openbox_pipe_menu>")
