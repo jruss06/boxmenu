@@ -1,11 +1,11 @@
 #!/bin/python3
 
 import configparser
-import os
+import glob
 import uuid
 
 config = configparser.RawConfigParser()
-entries = os.listdir('/usr/share/applications/')
+entries = glob.glob('/usr/share/applications/*.desktop')
 
 cats = {
     "Office" : "Office", 
@@ -40,16 +40,23 @@ favorites.extend([
         ])
 
 for entry in entries:
-    config.read('/usr/share/applications/' + entry)
-    desktop = config["Desktop Entry"]
-    entryType = desktop.get('Categories')
-    command = desktop.get('Exec')
-    command = cleanCommand(command)
-    name = desktop.get('Name')
-    nodisplay = desktop.get('NoDisplay')
-    if nodisplay != "true":
-        item = DesktopItem(name, entryType, command.strip()) 
-        desktopFiles.append(item)
+    f = open(entry)
+    newItem = ["None", "None", "None", "None"]
+
+    for line in f:
+        strings = line.split("=")
+        if strings[0] == "Name" and newItem[0] == "None":
+            newItem[0] = strings[1]
+        if strings[0] == "Exec" and newItem[1] == "None":
+            newItem[1] = strings[1]
+        if strings[0] == "Categories":
+            newItem[2] = strings[1]
+        if strings[0] == "NoDisplay":
+            newItem[3] = strings[1]
+
+    if len(newItem) == 4 and newItem[3].strip() != "true":
+        command = cleanCommand(newItem[1])
+        desktopFiles.append(DesktopItem(newItem[0], newItem[2], command))
 
 print("<openbox_pipe_menu>")
 for fav in favorites:
