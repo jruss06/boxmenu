@@ -37,8 +37,9 @@ def cleanCommand(command):
     return command
 
 def generate():
-    entries = glob.glob('/usr/share/applications/*.desktop')
-    
+    entries = glob.glob('/usr/share/applications/*.desktop') 
+    desktopFiles = []
+
     cats = {
         "Office" : "Office", 
         "Accessories": "Utility", 
@@ -48,15 +49,17 @@ def generate():
         "Settings": "Settings"
         }
     
-    desktopFiles = []
-    favorites = []
-    
-    favorites.extend([
+    favorites = [
             DesktopItem("Terminal", None, "lxterminal"),
             DesktopItem("Web Browser", None, "firefox"),
             DesktopItem("Files", None, "pcmanfm")
-            ])
-    
+            ]
+ 
+    system = [
+            DesktopItem("Reconfigure", None, "openbox --reconfigure"),
+            DesktopItem("Exit", None, "openbox --exit")
+            ]
+
     for entry in entries:
         f = open(entry)
         newItem = ["None", "None", "None", "None"]
@@ -91,10 +94,17 @@ def generate():
                 desktop.used = True
                 print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
         print("</menu>")
-    
-    
+     
     print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"Other\">")
     for desktop in desktopFiles:
+        if desktop.used == False:
+            desktop.used = True
+            print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
+    print("</menu>")
+
+    print("<separator/>")
+    print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"Openbox\">")
+    for desktop in system:
         if desktop.used == False:
             desktop.used = True
             print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
