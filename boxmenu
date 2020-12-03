@@ -88,14 +88,14 @@ def generate():
     
     print("<separator label=\"Categories\"/>")
     for cat in sorted(cats):
-        print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"" + cat + "\">")
+        print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"" + cat + "\">")
         for desktop in desktopFiles:
             if cats[cat] in desktop.types and desktop.used == False:
                 desktop.used = True
                 print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
         print("</menu>")
      
-    print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"Other\">")
+    print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"Other\">")
     for desktop in desktopFiles:
         if desktop.used == False:
             desktop.used = True
@@ -103,7 +103,7 @@ def generate():
     print("</menu>")
 
     print("<separator/>")
-    print("<menu id=\"" + str(uuid.uuid1()) + "\" label=\"Openbox\">")
+    print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"Openbox\">")
     for desktop in system:
         if desktop.used == False:
             desktop.used = True
