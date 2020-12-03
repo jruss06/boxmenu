@@ -26,6 +26,7 @@ def writeMenu():
     f = open(exp_var, "w")
     f.write(data)
     f.close()
+    print("wrote menu.xml file")
 
 def cleanCommand(command):
     words = command.split()
@@ -138,7 +139,6 @@ def main():
                  
             elif currentArgument in ("-w", "--write"):
                 writeMenu()
-                print("wrote menu.xml file")
     
     except getopt.error as err:
         # output error, and return with an error code
