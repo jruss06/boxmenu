@@ -37,6 +37,12 @@ def cleanCommand(command):
     command = " ".join(words)
     return command
 
+def printMenu(items, cat_name):
+        print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"" + cat_name + "\">")
+        for desktop in items:
+                print("<item label=\"" + desktop.name +"\"><action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
+        print("</menu>")
+
 def generate():
     entries = glob.glob('/usr/share/applications/*.desktop') 
     entries.extend(glob.glob('/usr/local/share/applications/*.desktop')) 
@@ -90,12 +96,13 @@ def generate():
     
     print("<separator label=\"Categories\"/>")
     for cat in sorted(cats):
-        print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"" + cat + "\">")
+        items = []
         for desktop in desktopFiles:
             if cats[cat] in desktop.types and desktop.used == False:
                 desktop.used = True
-                print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
-        print("</menu>")
+                items.append(desktop)
+        if len(items) > 0:
+            printMenu(items, cat)
      
     print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"Other\">")
     for desktop in desktopFiles:
