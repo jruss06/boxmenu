@@ -1,4 +1,4 @@
-#!/bin/python3
+#!/usr/bin/env python3
 import os
 import glob
 import uuid
@@ -39,6 +39,7 @@ def cleanCommand(command):
 
 def generate():
     entries = glob.glob('/usr/share/applications/*.desktop') 
+    entries.extend(glob.glob('/usr/local/share/applications/*.desktop')) 
     desktopFiles = []
 
     cats = {
