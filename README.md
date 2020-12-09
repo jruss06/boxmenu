@@ -14,3 +14,10 @@ boxmenu [options]
 options:
    
        -w, --write    writes menu.xml automatically 
+       
+## Config
+path: $HOME/.config/boxmenu/config.json
+
+- turn other menu on/off
+- set favorite items
+- set system item
