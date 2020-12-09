@@ -1,12 +1,14 @@
 # boxmenu
-Openbox dynamic menu generator created in python3
+Openbox dynamic menu generator created in python3.
 
-This is a simple script to generate openbox menus while avoiding external dependencies
+This is a simple script to generate openbox menus while avoiding external dependencies.
 
 ## Install
-Simply download the script and place in your path
+Simply download the script and place in your path.
 
-Check menu.xml for an example
+Check menu.xml for an example.
+
+Starting from release v0.5.0 the config file is now mandatory.
 
 ## Usage
 boxmenu [options]
