@@ -32,22 +32,6 @@ system = [
         DesktopItem("Exit", None, "openbox --exit")
     ]
 
-def loadConf():
-    conf = None
-    path = "$HOME/.config/boxmenu/config.json"
-    exp_var = os.path.expandvars(path) 
-    if os.path.exists(exp_var):
-        with open(exp_var) as f:
-            conf = json.load(f)
-
-    if conf != None:
-        favorites.clear()
-        system.clear()
-        for i in conf['favorites']:
-            favorites.append(DesktopItem(i[0], None, i[1]))
-        for i in conf['system']:
-            system.append(DesktopItem(i[0], None, i[1]))
-
 def writeMenu():
     path = "$HOME/.config/openbox/menu.xml"
     exp_var = os.path.expandvars(path) 
@@ -80,7 +64,7 @@ def printMenu(items, cat_name):
                 print("<item label=\"" + desktop.name +"\"><action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
         print("</menu>")
 
-def generate():
+def generate(otherMenu):
     entries = glob.glob('/usr/share/applications/*.desktop') 
     entries.extend(glob.glob('/usr/local/share/applications/*.desktop')) 
 
@@ -119,13 +103,14 @@ def generate():
                 items.append(desktop)
         if len(items) > 0:
             printMenu(items, cat)
-     
-    print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"Other\">")
-    for desktop in desktopFiles:
-        if desktop.used == False:
-            desktop.used = True
-            print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
-    print("</menu>")
+    
+    if otherMenu:
+        print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"Other\">")
+        for desktop in desktopFiles:
+            if desktop.used == False:
+                desktop.used = True
+                print("<item label=\"" + desktop.name +"\"> <action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
+        print("</menu>")
 
     print("<separator/>")
     print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"Openbox\">")
@@ -136,6 +121,25 @@ def generate():
     print("</menu>")
     print("</openbox_pipe_menu>")
 
+def loadConf():
+    conf = None
+    otherMenu = True
+    path = "$HOME/.config/boxmenu/config.json"
+    exp_var = os.path.expandvars(path) 
+    if os.path.exists(exp_var):
+        with open(exp_var) as f:
+            conf = json.load(f)
+
+    if conf != None:
+        favorites.clear()
+        system.clear()
+        otherMenu = conf['otherMenu']
+        for i in conf['favorites']:
+            favorites.append(DesktopItem(i[0], None, i[1]))
+        for i in conf['system']:
+            system.append(DesktopItem(i[0], None, i[1]))
+
+    generate(otherMenu)
 
 ## MAIN ##
 def main():
@@ -148,7 +152,6 @@ def main():
     
     if len(argumentList) == 0:
         loadConf()
-        generate()
     
     try:
         # Parsing argument
