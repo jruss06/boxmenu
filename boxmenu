@@ -12,7 +12,6 @@ class DesktopItem:
         self.command = command
         self.used = False
 
-desktopFiles = []
 cats = {
     "Office" : "Office", 
     "Accessories": "Utility", 
@@ -67,7 +66,7 @@ def printMenu(items, cat_name):
 def generate(otherMenu):
     entries = glob.glob('/usr/share/applications/*.desktop') 
     entries.extend(glob.glob('/usr/local/share/applications/*.desktop')) 
-
+    desktopFiles = []
     for entry in entries:
         f = open(entry)
         newItem = ["None", "None", "None", "None"]
