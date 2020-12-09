@@ -21,4 +21,4 @@ path: $HOME/.config/boxmenu/config.json
 - turn other menu on/off
 - set favorite items
 - set system items
-- set categories (first part is name is menu and the second part is the tag it looks for)
+- set categories (first part is the menu name and the second part is the tag from the desktop file)
