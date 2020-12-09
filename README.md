@@ -20,4 +20,4 @@ path: $HOME/.config/boxmenu/config.json
 
 - turn other menu on/off
 - set favorite items
-- set system item
+- set system items
