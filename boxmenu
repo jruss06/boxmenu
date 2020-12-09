@@ -63,7 +63,7 @@ def printMenu(items, cat_name):
                 print("<item label=\"" + desktop.name +"\"><action name=\"Execute\"><command><![CDATA[" + desktop.command + "]]></command></action></item>")
         print("</menu>")
 
-def generate(otherMenu):
+def generate(otherMenu, systemName):
     entries = glob.glob('/usr/share/applications/*.desktop') 
     entries.extend(glob.glob('/usr/local/share/applications/*.desktop')) 
     desktopFiles = []
@@ -112,7 +112,7 @@ def generate(otherMenu):
         print("</menu>")
 
     print("<separator/>")
-    print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"Openbox\">")
+    print("<menu id=\"" + str(uuid.uuid4()) + "\" label=\"" + systemName +"\">")
     for desktop in system:
         if desktop.used == False:
             desktop.used = True
@@ -123,6 +123,7 @@ def generate(otherMenu):
 def loadConf():
     conf = None
     otherMenu = True
+    systemName = "Openbox"
     path = "$HOME/.config/boxmenu/config.json"
     exp_var = os.path.expandvars(path) 
     if os.path.exists(exp_var):
@@ -133,12 +134,13 @@ def loadConf():
         favorites.clear()
         system.clear()
         otherMenu = conf['otherMenu']
+        systemName = conf['systemName']
         for i in conf['favorites']:
             favorites.append(DesktopItem(i[0], None, i[1]))
         for i in conf['system']:
             system.append(DesktopItem(i[0], None, i[1]))
 
-    generate(otherMenu)
+    generate(otherMenu, systemName)
 
 ## MAIN ##
 def main():

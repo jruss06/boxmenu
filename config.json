@@ -3,7 +3,8 @@
 	"favorites": [
 		["Terminal", "urxvt"],
 		["Web Browser", "firefox"]
-	],	
+	],
+        "systemName": "Openbox",	
 	"system": [
 		["Reconfigure", "openbox --reconfigure"],
 		["Exit", "openbox --exit"]
