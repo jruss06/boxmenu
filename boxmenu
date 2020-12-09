@@ -3,6 +3,7 @@ import os
 import glob
 import uuid
 import sys, getopt
+import json
 
 class DesktopItem:
     def __init__(self, name, types, command):
@@ -10,6 +11,42 @@ class DesktopItem:
         self.types = types
         self.command = command
         self.used = False
+
+desktopFiles = []
+cats = {
+    "Office" : "Office", 
+    "Accessories": "Utility", 
+    "Network": "Network", 
+    "Graphics": "Graphics", 
+    "Multimedia": "AudioVideo",
+    "Settings": "Settings"
+    }
+
+favorites = [
+        DesktopItem("Terminal", None, "urxvt"),
+        DesktopItem("Web Browser", None, "firefox")
+     ]
+
+system = [
+        DesktopItem("Reconfigure", None, "openbox --reconfigure"),
+        DesktopItem("Exit", None, "openbox --exit")
+    ]
+
+def loadConf():
+    conf = None
+    path = "$HOME/.config/boxmenu/config.json"
+    exp_var = os.path.expandvars(path) 
+    if os.path.exists(exp_var):
+        with open(exp_var) as f:
+            conf = json.load(f)
+
+    if conf != None:
+        favorites.clear()
+        system.clear()
+        for i in conf['favorites']:
+            favorites.append(DesktopItem(i[0], None, i[1]))
+        for i in conf['system']:
+            system.append(DesktopItem(i[0], None, i[1]))
 
 def writeMenu():
     path = "$HOME/.config/openbox/menu.xml"
@@ -30,10 +67,10 @@ def writeMenu():
 
 def cleanCommand(command):
     words = command.split()
-    for word in words:
-        if '%' in word:
-            words.remove(word)
-    if words[-1] == '--': words.pop(-1)
+    if '%' in words[-1]: 
+        words.pop(-1)
+    if words[-1] == '--': 
+        words.pop(-1)
     command = " ".join(words)
     return command
 
@@ -46,27 +83,6 @@ def printMenu(items, cat_name):
 def generate():
     entries = glob.glob('/usr/share/applications/*.desktop') 
     entries.extend(glob.glob('/usr/local/share/applications/*.desktop')) 
-    desktopFiles = []
-
-    cats = {
-        "Office" : "Office", 
-        "Accessories": "Utility", 
-        "Network": "Network", 
-        "Graphics": "Graphics", 
-        "Multimedia": "AudioVideo",
-        "Settings": "Settings"
-        }
-    
-    favorites = [
-            DesktopItem("Terminal", None, "lxterminal"),
-            DesktopItem("Web Browser", None, "firefox"),
-            DesktopItem("Files", None, "pcmanfm")
-            ]
- 
-    system = [
-            DesktopItem("Reconfigure", None, "openbox --reconfigure"),
-            DesktopItem("Exit", None, "openbox --exit")
-            ]
 
     for entry in entries:
         f = open(entry)
@@ -131,6 +147,7 @@ def main():
     long_options = ["help", "write"]
     
     if len(argumentList) == 0:
+        loadConf()
         generate()
     
     try:

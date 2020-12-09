@@ -1,0 +1,11 @@
+{
+	"other": true,
+	"favorites": [
+		["Terminal", "urxvt"],
+		["Web Browser", "firefox"]
+	],	
+	"system": [
+		["Reconfigure", "openbox --reconfigure"],
+		["Web Browser", "openbox --exit"]
+	]
+}
