@@ -172,6 +172,5 @@ def main():
         # output error, and return with an error code
         print (str(err))
 
-
 if __name__ == "__main__":
     main()
