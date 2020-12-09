@@ -12,24 +12,9 @@ class DesktopItem:
         self.command = command
         self.used = False
 
-cats = {
-    "Office" : "Office", 
-    "Accessories": "Utility", 
-    "Network": "Network", 
-    "Graphics": "Graphics", 
-    "Multimedia": "AudioVideo",
-    "Settings": "Settings"
-    }
-
-favorites = [
-        DesktopItem("Terminal", None, "urxvt"),
-        DesktopItem("Web Browser", None, "firefox")
-     ]
-
-system = [
-        DesktopItem("Reconfigure", None, "openbox --reconfigure"),
-        DesktopItem("Exit", None, "openbox --exit")
-    ]
+cats = {}
+favorites = []
+system = []
 
 def writeMenu():
     path = "$HOME/.config/openbox/menu.xml"
@@ -122,23 +107,24 @@ def generate(otherMenu, systemName):
 
 def loadConf():
     conf = None
-    otherMenu = True
-    systemName = "Openbox"
     path = "$HOME/.config/boxmenu/config.json"
     exp_var = os.path.expandvars(path) 
-    if os.path.exists(exp_var):
-        with open(exp_var) as f:
-            conf = json.load(f)
+    if os.path.exists(exp_var) == False:
+        print("config file not found")
+        return
+
+    with open(exp_var) as f:
+        conf = json.load(f)
 
     if conf != None:
-        favorites.clear()
-        system.clear()
         otherMenu = conf['otherMenu']
         systemName = conf['systemName']
         for i in conf['favorites']:
             favorites.append(DesktopItem(i[0], None, i[1]))
         for i in conf['system']:
             system.append(DesktopItem(i[0], None, i[1]))
+        for cat in conf['categories']:
+            cats[cat[0]] = cat[1]
 
     generate(otherMenu, systemName)
 

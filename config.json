@@ -8,5 +8,13 @@
 	"system": [
 		["Reconfigure", "openbox --reconfigure"],
 		["Exit", "openbox --exit"]
+	],
+	"categories" : [
+		["Office" , "Office"], 
+		["Accessories", "Utility"], 
+		["Network", "Network"], 
+		["Graphics", "Graphics"], 
+		["Multimedia", "AudioVideo"],
+		["Settings", "Settings"]
 	]
 }
