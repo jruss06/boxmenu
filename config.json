@@ -1,19 +1,20 @@
 {
-	"OtherMenu": true,
-	"Favorites": [
+	"otherMenu": true,
+	"favorites": [
 		["Terminal", "urxvt"],
 		["Web Browser", "firefox"]
 	],
-    "SystemName": "Openbox",	
-	"System": [
+        "systemName": "Openbox",	
+	"system": [
 		["Reconfigure", "openbox --reconfigure"],
 		["Exit", "openbox --exit"]
 	],
-	"Categories" : [
+	"categories" : [
 		["Office" , "Office"], 
 		["Accessories", "Utility"], 
 		["Network", "Network"], 
 		["Graphics", "Graphics"], 
+		["Games", "Game"], 
 		["Multimedia", "AudioVideo"],
 		["Settings", "Settings"]
 	]
