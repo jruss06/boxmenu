@@ -1,4 +1,4 @@
-# boxmenu
+# boxmenu (Go version)
 Openbox dynamic menu generator created in python3.
 
 This is a simple script to generate openbox menus while avoiding external dependencies.
@@ -9,13 +9,6 @@ Simply download the script and place in your path.
 Check menu.xml for an example.
 
 Starting from release v0.5.0 the config file is now mandatory.
-
-## Usage
-boxmenu [options]
-
-options:
-   
-       -w, --write    writes menu.xml automatically 
        
 ## Config
 path: $HOME/.config/boxmenu/config.json
