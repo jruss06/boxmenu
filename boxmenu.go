@@ -131,16 +131,18 @@ func generate(confJson ConfigJson) {
         }
     }
 
-    fmt.Printf("<menu id=\"%s\" label=\"%s\">\n", "Other", "Other")
-    for _, item := range desktopMenu {
-        if item.used == false {
-            fmt.Printf("<item label=\"%s\"><action name=\"Execute\"><command><![CDATA[%s]]></command></action></item>\n", item.name, item.command)
+    if confJson.OtherMenu {
+        fmt.Printf("<menu id=\"%s\" label=\"%s\">\n", "Other", "Other")
+        for _, item := range desktopMenu {
+            if item.used == false {
+                fmt.Printf("<item label=\"%s\"><action name=\"Execute\"><command><![CDATA[%s]]></command></action></item>\n", item.name, item.command)
+            }
         }
+        fmt.Println("</menu>")
     }
-    fmt.Println("</menu>")
 
     fmt.Println("<separator/>")
-    fmt.Printf("<menu id=\"%s\" label=\"%s\">\n", "System", "Openbox")
+    fmt.Printf("<menu id=\"%s\" label=\"%s\">\n", "System", confJson.SystemName)
     for _, item := range confJson.System {
         fmt.Printf("<item label=\"%s\"><action name=\"Execute\"><command><![CDATA[%s]]></command></action></item>\n", item[0], item[1])
     }
