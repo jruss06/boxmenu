@@ -98,7 +98,7 @@ func countCatItems(catName string) int {
     return count
 }
 
-func generate(confJson ConfigJson) {
+func getDesktopFiles() {
     entries,_ := filepath.Glob("/usr/share/applications/*.desktop")
 
     for _, entry := range entries {
@@ -107,27 +107,50 @@ func generate(confJson ConfigJson) {
             desktopMenu = append(desktopMenu, newItem)
         }
     }
+}
+
+func generate(confJson ConfigJson) {
 
     fmt.Println("<openbox_pipe_menu>")
+
+    for _,fav := range confJson.Favorites {
+        fmt.Printf("<item label=\"%s\"><action name=\"Execute\"><command><![CDATA[%s]]></command></action></item>\n", fav[0], fav[1])
+    }
 
     fmt.Println("<separator label=\"Categories\"/>")
     for _, cat := range confJson.Categories {
         if countCatItems(cat[1]) > 0 {
             fmt.Printf("<menu id=\"%s\" label=\"%s\">\n", cat[1], cat[0])
-            for _, item := range desktopMenu {
+            for i,item := range desktopMenu {
                 if strings.Contains(item.cat, cat[1]) {
                     fmt.Printf("<item label=\"%s\"><action name=\"Execute\"><command><![CDATA[%s]]></command></action></item>\n", item.name, item.command)
+                    desktopMenu[i].used = true
                 }
             }
             fmt.Println("</menu>")
         }
-    } 
+    }
+
+    fmt.Printf("<menu id=\"%s\" label=\"%s\">\n", "Other", "Other")
+    for _, item := range desktopMenu {
+        if item.used == false {
+            fmt.Printf("<item label=\"%s\"><action name=\"Execute\"><command><![CDATA[%s]]></command></action></item>\n", item.name, item.command)
+        }
+    }
+    fmt.Println("</menu>")
+
+    fmt.Println("<separator/>")
+    fmt.Printf("<menu id=\"%s\" label=\"%s\">\n", "System", "Openbox")
+    for _, item := range confJson.System {
+        fmt.Printf("<item label=\"%s\"><action name=\"Execute\"><command><![CDATA[%s]]></command></action></item>\n", item[0], item[1])
+    }
+    fmt.Println("</menu>")
 
     fmt.Println("</openbox_pipe_menu>")
-
 }
 
 func main() {
     confJson := loadConf()
+    getDesktopFiles()
     generate(confJson)
 }
