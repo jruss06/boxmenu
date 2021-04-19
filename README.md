@@ -3,7 +3,7 @@ Openbox dynamic menu generator created in python3.
 
 This is a simple script to generate openbox menus while avoiding external dependencies.
 
-## Go Version
+## Go Version (Apr 19, 2021)
 There is now a golang branch that has most of the same features but has better performace and no python dependency (standalone executable)
 
 ### python
